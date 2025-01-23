@@ -1,5 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+
+# django'nun kendi user modelini kullanıyoruz
+from django.contrib.auth.models import User 
+
 
 # Kategori modeli
 class Category(models.Model):
