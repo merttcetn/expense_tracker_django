@@ -1,4 +1,4 @@
-# Expense Tracker
+# Expense Tracker 💵
 
 A Django-based web application for tracking personal expenses. This application allows users to manage their expenses, categorize spending, and monitor their budget.
 
