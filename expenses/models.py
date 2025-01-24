@@ -22,7 +22,6 @@ class Expense(models.Model):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(max_length=10)
     date = models.DateField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     

@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import Expense, Category, Budget
 from datetime import date, datetime
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ExpenseSerializer, CategorySerializer
 
 """
 -> Her bir view, bir HTTP isteğine yanıt olarak bir şablon (template) 
@@ -30,18 +33,15 @@ def expense_list(request): # 2. view fonksiyonu
 @login_required 
 def add_expense(request):
     # POST isteği ile form verileri gönderildiğinde
-    if request.method == 'POST': 
-        description = request.POST['description']
-        amount = request.POST['amount']
-        category_id = request.POST['category']
-        
+    if request.method == 'POST':
         # db'de alınan veriler ile yeni bir record oluşturma
         Expense.objects.create( 
+            title=request.POST['title'],
+            description=request.POST['description'],
+            amount=request.POST['amount'],
+            category_id=request.POST['category'],
             user=request.user,
-            description=description,
-            amount=amount,
-            category_id=category_id,
-            date = date.today()
+            date=date.today()
         )
 
         # yeni bir gider kaydedildikten sonra, kullanıcı expense_list sayfasına yönlendirilir.
@@ -50,3 +50,18 @@ def add_expense(request):
     # GET isteği ile sayfa yüklendiğinde, kullanıcıya kategori seçimi için form gösterilir.
     categories = Category.objects.all()
     return render(request, 'expenses/add_expense.html', {'categories': categories})
+
+class ExpenseViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ExpenseSerializer
+    
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()

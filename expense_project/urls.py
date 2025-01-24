@@ -16,6 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from expenses.views import ExpenseViewSet, CategoryViewSet
+
+router = DefaultRouter()
+router.register(r'expenses', ExpenseViewSet, basename='expense')
+router.register(r'categories', CategoryViewSet, basename='category')
 
 urlpatterns = [
     # admin sayfasına erişmek için
@@ -26,4 +32,6 @@ urlpatterns = [
 
     # auth sayfasına erişmek için
     path('accounts/', include('django.contrib.auth.urls')),
+
+    path('api/', include(router.urls)),
 ]
